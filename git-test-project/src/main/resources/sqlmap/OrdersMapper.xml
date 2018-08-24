@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.dao.OrdersMapper">
+    <!-- 查询全部订单数据-->
+    <select id="findAllOrders" resultType="com.itheima.po.Orders">
+        SELECT * FROM orders
+    </select>
+
+    <!-- 配置映射文件. resultMap 配置java对象中属性名称与sql语句中字段的名称的对应关系. type:要映射的java对象类型.
+    id : 唯一标识,通过id引用该resultMap-->
+    <resultMap id="ordersRM" type="com.itheima.po.Orders">
+        <!-- 配置订单的主键对应关系.column: sql语句中的字段. property:java实体类中的属性名称 . id标签是配置主键的-->
+        <id column="id" property="id"/>
+        <!-- 配置订单的普通字段对应关系-->
+        <result column="user_id" property="userId"/>
+        <result column="number" property="number"/>
+        <result column="createtime" property="createTime"/>
+        <result column="note" property="note"/>
+    </resultMap>
+    <select id="findAllOrdersRM" resultMap="ordersRM">
+      SELECT * FROM orders
+    </select>
+
+</mapper>

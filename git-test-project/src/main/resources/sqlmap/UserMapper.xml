@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.dao.UserMapper">
+    <!-- mybatis框架针对数据库操作提供了标签: insert / update / delete / select -->
+    <!-- select标签放置sql语句,id:唯一标识,与接口中的方法一致. parameterTupe : 参数类型,与接口的形参一致.
+    resultType : 返回值的类型,与接口中的返回值类型一致. #{id} : 占位符,与jdbc中的?占位符一致 -->
+    <!-- 通过Id查找用户 -->
+    <select id="findUserById" parameterType="int" resultType="com.itheima.po.User">
+      SELECT * FROM USER WHERE id=#{id}
+    </select>
+
+    <!-- 模糊查询用户-->
+    <!-- 使用字符串拼接符${}拼接参数,${} 拼接符里面传递的是java简单类型,只能放value , resultType如果返回的是
+    集合类型,那么它的值是集合中的类型,如:List<User> 该集合中的类型是User类
+    -->
+    <select id="findUserByName" parameterType="string" resultType="com.itheima.po.User">
+      SELECT * FROM USER where username like '%${value}%'
+    </select>
+
+    <!-- 新增用户 parameterType 传递的是User对象,所有这里是User对象类全限定名,没有返回值-->
+    <insert id="insertUser" parameterType="com.itheima.po.User">
+        <selectKey keyColumn="id" keyProperty="id" resultType="int" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO USER (id,username,birthday,sex,address) VALUES (#{id},#{username},#{birthday},#{sex},#{address})
+    </insert>
+
+    <!-- 当数据库表中主键字段由数据库维护,则不需要我们传递:如mysql. 获取数据库维护的主键,
+    selectKey : 作用是查询数据库维护的主键.  属性:Columu 主键字段  , keyproperty 实体类中的属性(与主键字段对应)
+    resultType 主键数据类型 , order 在insert语句执行前获得主键还是在执行后获得主键.before : 在执行前,after 在执行后
+    在insert标签中增加属性的方式,只适合于自动增长主键类型的数据库,
+-->
+
+    <!-- 根据用户ID 修改用户-->
+    <update id="updateUser" parameterType="com.itheima.po.User">
+        UPDATE  USER set username=#{username},sex=#{sex} WHERE id=#{id}
+    </update>
+
+    <!-- 根据用户ID删除用户-->
+    <delete id="deleteUser" parameterType="int">
+        DELETE FROM USER WHERE id=#{id}
+    </delete>
+
+    <!-- 使用pojo包装类型,根据用户名模糊查询用户-->
+    <select id="findUserByUserNameForPojo" parameterType="com.itheima.po.QueryVo"  resultType="com.itheima.po.User">
+        SELECT * from user WHERE username LIKE '%${user.username}%'
+    </select>
+
+    <!-- 统计用户表中的用户数量, java简单类型 resultType-->
+    <select id="countUser" resultType="int">
+        SELECT COUNT(*) from USER
+    </select>
+</mapper>
